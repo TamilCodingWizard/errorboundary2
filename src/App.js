@@ -1,23 +1,38 @@
 import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
+import Message from './Message';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function ErrorFallback({ error, resetErrorBoundary }) {
+  return (
+    <div role="alert" style={{ color: "red" }}>
+      <p>{error.message}</p>
+      <button onClick={resetErrorBoundary}>Reset!</button>
+    </div>
+  );
+}
 
 function App() {
+  const [message, setMessage] = useState("");
+
+  function handleSubmit(payload) {
+    setMessage(payload);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <h1>Do not type 'Crash'</h1>
+      <h3>{message}</h3>
+      <div>
+        <ErrorBoundary
+          FallbackComponent={ErrorFallback}
+          onReset={() => setMessage("")}
+          resetKeys={[message]}
         >
-          Learn React
-        </a>
-      </header>
+          <Message message={message} onSubmit={handleSubmit} />
+        </ErrorBoundary>
+      </div>
     </div>
   );
 }
